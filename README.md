@@ -30,3 +30,7 @@
 Полное удаление всех ресурсов:
 
     make destroy
+
+
+## Внешняя доступность проверяется через Upmon, а внутреннее состояние через Datadog.
+<img width="1858" height="959" alt="image" src="https://github.com/user-attachments/assets/85bae8ab-3733-4bdc-a7c2-6d1682a8e9f5" />
