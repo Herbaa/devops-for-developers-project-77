@@ -14,7 +14,7 @@
           - name: app-check
             url: http://localhost:80
             timeout: 5
-  
+
   pre_tasks:
     - name: Load encrypted variables
       ansible.builtin.include_vars: vault.yml
