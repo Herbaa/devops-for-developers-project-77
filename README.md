@@ -1,24 +1,32 @@
 ### Hexlet tests and linter status:
 [![Actions Status](https://github.com/Herbaa/devops-for-developers-project-77/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/Herbaa/devops-for-developers-project-77/actions)
-
+## [Ссылка на приложения](https://devops.herba.ink)
 ## Подготовка
 1. Создать API Token в Digitalocean
 2. Добавить свой SSH ключ в панель DigitalOcean и скопируйте его Fingerprint
 3. Установить terraform и ansible
 
 ## Управление инфраструктурой
-инициализация Terraform
+Установка роли Ansible:
 
-`make init`
+    make ansible-prepare
+   
+Запустите деплой:
 
-просмотр планируемых изменений
+    make ansible-deploy
+  
+Инициализация Terraform
 
-```make plan```
+    make init
 
-инфраструктуры в облаке.
+Просмотр планируемых изменений
 
-```make apply``` 
+    make plan
 
-полное удаление всех ресурсов.
+Инфраструктуры в облаке.
 
-```make destroy```  
+    make apply
+
+Полное удаление всех ресурсов.
+
+    make destroy
