@@ -3,9 +3,19 @@
   become: yes
   vars_files:
     - vault.yml
-
+  vars:
+    datadog_api_key: "{{ datadog_api_key }}"
+    datadog_site: "datadoghq.eu"
+    datadog_checks:
+      http_check:
+        init_config:
+        instances:
+          - name: app-check
+            url: http://localhost:80
+            timeout: 5
   roles:
     - role: geerlingguy.docker
+    - role: datadog.datadog
 
   tasks:
     - name: Install python3-docker

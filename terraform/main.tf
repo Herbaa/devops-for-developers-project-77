@@ -64,3 +64,16 @@ resource "digitalocean_record" "devops" {
   name = "devops"
   value = digitalocean_loadbalancer.www-lb.ip
 }
+
+resource "datadog_monitor" "app_health" {
+  name = "Health check"
+  type = "service check"
+  query = "\"http.can_connect\".over(\"instance:app-check\").by(\"*\").last(2).count_by_status()"
+  message = "error"
+  
+  monitor_thresholds {
+    critical = 1
+    warning = 1
+    ok = 1
+  }
+}
