@@ -1,8 +1,9 @@
 ---
-- hosts: web
+- name: Deploy and Configure Application # Ошибка 1: Добавили имя плейбука
+  hosts: web
   become: true
-  vars_files:
-    - vault.yml
+  # vars_files: # Удалили/закомментировали здесь
+  #   - vault.yml
   vars:
     datadog_api_key: "{{ datadog_api_key }}"
     datadog_site: "datadoghq.eu"
@@ -13,13 +14,19 @@
           - name: app-check
             url: http://localhost:80
             timeout: 5
+  
+  pre_tasks:
+    - name: Load encrypted variables
+      ansible.builtin.include_vars: vault.yml
+      no_log: true
+
   roles:
     - role: geerlingguy.docker
     - role: datadog.datadog
 
   tasks:
     - name: Install python3-docker
-      apt:
+      ansible.builtin.apt:
         name: python3-docker
         state: present
         update_cache: true
