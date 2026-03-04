@@ -1,6 +1,6 @@
 ---
 - hosts: web
-  become: yes
+  become: true
   vars_files:
     - vault.yml
   vars:
@@ -22,7 +22,7 @@
       apt:
         name: python3-docker
         state: present
-        update_cache: yes
+        update_cache: true
 
     - name: Run test nginx container
       community.general.docker_container:

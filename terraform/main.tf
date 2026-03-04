@@ -77,3 +77,8 @@ resource "datadog_monitor" "app_health" {
     ok = 1
   }
 }
+
+resource "local_file" "ansible_vars" {
+  content  = "web_server_ips: ${jsonencode(digitalocean_droplet.web.*.ipv4_address)}"
+  filename = "../ansible/group_vars/all.yml"
+}
