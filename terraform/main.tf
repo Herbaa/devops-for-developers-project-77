@@ -1,20 +1,28 @@
 resource "digitalocean_droplet" "web" {
-  count              = 2
-  name               = "web-server-${count.index + 1}"
-  image              = "docker-20-04" # Образ с предустановленным Docker
-  region             = var.region
-  size               = "s-1vcpu-1gb"
-  ssh_keys           = [var.ssh_fingerprint]
-  tags               = ["web"]
+  count = 2
+  name = "web-server-${count.index + 1}"
+  image = "docker-20-04" # Образ с предустановленным Docker
+  region = var.region
+  size = "s-1vcpu-1gb"
+  ssh_keys = [var.ssh_fingerprint]
+  tags = ["web"]
 }
 
 resource "digitalocean_database_cluster" "postgres" {
-  name       = "db-cluster"
-  engine     = "pg"
-  version    = "15"
-  size       = "db-s-1vcpu-1gb"
-  region     = var.region
+  name = "db-cluster"
+  engine = "pg"
+  version = "15"
+  size = "db-s-1vcpu-1gb"
+  region = var.region
   node_count = 1
+}
+# Сертификат
+resource "digitalocean_certificate" "cert" {
+  name = "devops-cert"
+  type = "lets_encrypt"
+  domains = ["devops.herba.ink"]
+
+  depends_on = [digitalocean_domain.default] 
 }
 
 resource "digitalocean_loadbalancer" "www-lb" {
@@ -22,24 +30,37 @@ resource "digitalocean_loadbalancer" "www-lb" {
   region = var.region
 
   forwarding_rule {
-    entry_port     = 80
+    entry_port = 80
     entry_protocol = "http"
-    target_port     = 80
+    target_port = 80
     target_protocol = "http"
   }
 
   forwarding_rule {
-    entry_port      = 443
-    entry_protocol  = "https"
-    target_port      = 80
-    target_protocol  = "http"
-    # certificate_name = digitalocean_certificate.cert.name 
+    entry_port = 443
+    entry_protocol = "https"
+    target_port = 80
+    target_protocol = "http"
+    certificate_name = digitalocean_certificate.cert.name
   }
 
+  redirect_http_to_https = true
+
   healthcheck {
-    port     = 22
+    port = 22
     protocol = "tcp"
   }
 
   droplet_ids = digitalocean_droplet.web.*.id
+}
+
+resource "digitalocean_domain" "default" {
+  name = "devops.herba.ink"
+}
+
+resource "digitalocean_record" "devops" {
+  domain = digitalocean_domain.default.id
+  type = "A"
+  name = "devops"
+  value = digitalocean_loadbalancer.www-lb.ip
 }

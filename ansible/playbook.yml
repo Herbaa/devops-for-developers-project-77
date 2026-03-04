@@ -1,0 +1,24 @@
+---
+- hosts: web
+  become: yes
+  vars_files:
+    - vault.yml
+
+  roles:
+    - role: geerlingguy.docker
+
+  tasks:
+    - name: Install python3-docker
+      apt:
+        name: python3-docker
+        state: present
+        update_cache: yes
+
+    - name: Run test nginx container
+      community.general.docker_container:
+        name: app-container
+        image: nginxdemos/hello:latest
+        state: started
+        restart_policy: always
+        published_ports:
+          - "80:80"
